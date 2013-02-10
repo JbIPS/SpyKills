@@ -4,6 +4,7 @@ import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.Sprite;
 import nme.events.Event;
+import nme.events.MouseEvent;
 import nme.Lib;
 import nme.ui.Mouse;
 
@@ -23,6 +24,14 @@ class ShootRoom extends Sprite
 		#else
 		addEventListener(Event.ADDED_TO_STAGE, init);
 		#end
+		
+		addEventListener(MouseEvent.CLICK, onShoot);
+	}
+	
+	private function onShoot(e:MouseEvent):Void 
+	{
+		Assets.getSound("sfx/shot.mp3").play();
+		Lib.trace(e.target.name);
 	}
 
 	private function init(e) 
@@ -31,12 +40,14 @@ class ShootRoom extends Sprite
 		Mouse.hide();
 		var cursor = new Sprite();
 		cursor.addChild(gunSight);
-		cursor.x = mouseX;// + gunSight.width / 2;
-		cursor.y = mouseY;// + gunSight.height / 2;
+		cursor.x = mouseX - gunSight.width/2;
+		cursor.y = mouseY -gunSight.height/2;
+		cursor.mouseChildren = cursor.mouseEnabled = false;
 		Lib.current.addChild(cursor);
 		cursor.startDrag();
 		
-		addChild(new ShootObject(Assets.getBitmapData("img/background.png")));
+		var background = new ShootObject(Assets.getBitmapData("img/background.png"));
+		addChild(background);
 		
 		var barrel = new ShootObject(Assets.getBitmapData("img/barrel.png"));
 		barrel.x = 131;

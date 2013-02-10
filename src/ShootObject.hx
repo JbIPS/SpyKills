@@ -23,10 +23,9 @@ class ShootObject extends Sprite
 	private function onHit(e: MouseEvent) : Void 
 	{
 		var hit = new Bitmap(Assets.getBitmapData("img/bullet_hole.png"));
-		hit.x = e.localX + 19;
-		hit.y = e.localY +19;
+		hit.x = e.localX - 5;
+		hit.y = e.localY - 5;
 		addChild(hit);
-		Assets.getSound("sfx/shot.mp3").play();
 	}
 	
 }
