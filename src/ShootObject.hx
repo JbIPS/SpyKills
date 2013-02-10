@@ -4,6 +4,7 @@ import nme.display.Bitmap;
 import nme.display.BitmapData;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
+import nme.geom.Point;
 
 /**
  * ...
@@ -18,6 +19,12 @@ class ShootObject extends Sprite
 		super();
 		addChild(new Bitmap(bitmapData));
 		addEventListener(MouseEvent.CLICK, onHit);
+	}
+	
+	public function init(point: Point) : Void 
+	{
+		x = point.x;
+		y = point.y;
 	}
 	
 	private function onHit(e: MouseEvent) : Void 
