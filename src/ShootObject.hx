@@ -13,10 +13,12 @@ import nme.geom.Point;
 
 class ShootObject extends Sprite
 {
+	private var bulletScale: Float;
 
-	public function new(bitmapData: BitmapData) 
+	public function new(bitmapData: BitmapData, scale: Float = 1) 
 	{
 		super();
+		bulletScale = scale;
 		addChild(new Bitmap(bitmapData));
 		addEventListener(MouseEvent.CLICK, onHit);
 	}
@@ -30,6 +32,7 @@ class ShootObject extends Sprite
 	private function onHit(e: MouseEvent) : Void 
 	{
 		var hit = new Bitmap(Assets.getBitmapData("img/bullet_hole.png"));
+		hit.scaleX = hit.scaleY = bulletScale;
 		hit.x = e.localX - 5;
 		hit.y = e.localY - 5;
 		addChild(hit);
