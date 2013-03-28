@@ -5,3 +5,4 @@ bin/flash/haxe
 assets/img/Thumbs.db
 SpySkills.*
 !*.html
+Thumbs.db
