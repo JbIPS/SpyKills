@@ -7,6 +7,8 @@ import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.MouseEvent;
 import nme.Lib;
+import nme.text.TextField;
+import nme.text.TextFormat;
 import nme.ui.Mouse;
 
 /**
@@ -20,11 +22,19 @@ class ShootRoom extends Sprite
 	public static var barrelPos: Position = { x: 131, y: 338};
 	public static var woodenCratePos: Position = {x: 366, y: 282};
 	public static var metalCratePos: Position = { x: 270, y: 428 };
+	public static var score: Int = 0;
+	public static var combo (default, setCombo): Int = 1;
+	public static var accelerator: Float=1;
+	public static var startTime: Int;
 	
 	private var targets: Array<Target>;
-	private var startTime: Int;
 	private var lastTarget: Int;
 	private var hitScreen: Sprite;
+	private var cursor: Sprite;
+	
+	private var scoreField: TextField;
+	private var timerField: TextField;
+	private var comboField: TextField;
 
 	public function new() 
 	{
@@ -37,6 +47,13 @@ class ShootRoom extends Sprite
 		targets = new Array<Target>();
 		addEventListener(MouseEvent.CLICK, onShoot);
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		
+		scoreField = new TextField();
+		scoreField.embedFonts = true;
+		timerField = new TextField();
+		timerField.embedFonts = true;
+		comboField = new TextField();
+		comboField.embedFonts = true;
 	}
 	
 	private function onShoot(e:MouseEvent):Void 
@@ -48,7 +65,7 @@ class ShootRoom extends Sprite
 	{
 		var gunSight = new Bitmap(Assets.getBitmapData("img/gun_sight.png"));
 		Mouse.hide();
-		var cursor = new Sprite();
+		cursor = new Sprite();
 		cursor.addChild(gunSight);
 		cursor.x = mouseX - gunSight.width/2;
 		cursor.y = mouseY -gunSight.height/2;
@@ -59,40 +76,49 @@ class ShootRoom extends Sprite
 		var background = new ShootObject(Assets.getBitmapData("img/background.png"), 0.5);
 		addChild(background);
 		
+		var scoreFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 20, 0xFF0000, false);
+		scoreField.selectable = scoreField.mouseEnabled = false;
+		scoreField.defaultTextFormat = scoreFormat;
+		scoreField.x = 60;
+		scoreField.y = 35;
+		addChild(scoreField);
+		
+		comboField.selectable = scoreField.mouseEnabled = false;
+		comboField.defaultTextFormat = scoreFormat;
+		comboField.x = 60;
+		comboField.y = scoreField.x+20;
+		addChild(comboField);
+		
+		timerField.defaultTextFormat = scoreFormat;
+		timerField.selectable = timerField.mouseEnabled = false;
+		timerField.y = scoreField.y + 20;
+		timerField.x = scoreField.x;
+		addChild(timerField);
 		
 		var target = new Target("metal");
 		targets.push(target);
 		var target2 = new Target("wooden", 0.5);
-		var mask2 = new Bitmap(Assets.getBitmapData("img/barrel.png"));
-		mask2.height += target2.height - 100;
-		mask2.x = woodenCratePos.x;
+		var mask2 = new Bitmap(Assets.getBitmapData("img/target.png"));
+		mask2.x = woodenCratePos.x+30;
 		mask2.y = woodenCratePos.y - target2.height;
 		target2.mask = mask2;
 		addChild(mask2);
 		addChild(target2);
 		targets.push(target2);
 		var target3 = new Target("column");
-		var mask3 = new Bitmap(Assets.getBitmapData("img/column.png"));
-		mask3.width += target3.width - 100;
+		var mask3 = new Bitmap(Assets.getBitmapData("img/target.png"));
 		mask3.x = columnPos.x - target3.width;
-		mask3.y = columnPos.y;
+		mask3.y = columnPos.y+100;
 		target3.mask = mask3;
-		addChild(mask3);
-		addChild(target3);
 		targets.push(target3);
 		var target4 = new Target("barrel");
-		var mask4 = new Bitmap(Assets.getBitmapData("img/barrel.png"));
-		mask4.height += target4.height - 50;
+		var mask4 = new Bitmap(Assets.getBitmapData("img/target.png"));
 		mask4.x = barrelPos.x;
 		mask4.y = barrelPos.y - target4.height;
 		target4.mask = mask4;
 		addChild(mask4);
 		addChild(target4);
 		targets.push(target4);
-		
-		for (target in targets) {
-			target.addEventListener(HitEvent.HIT, hit);
-		}
 		
 		var barrel = new ShootObject(Assets.getBitmapData("img/barrel.png"));
 		barrel.x = barrelPos.x;
@@ -108,41 +134,62 @@ class ShootRoom extends Sprite
 		woodenCrate.y = woodenCratePos.y;
 		
 		addChild(barrel);
-		addChild(column);
 		addChild(woodenCrate);
+		addChild(mask3);
+		addChild(target3);
+		addChild(column);
 		addChild(target);
 		addChild(metalCrate);
-		
-		hitScreen = new Sprite();
-		hitScreen.graphics.beginFill(0xFF0000);
-		hitScreen.graphics.drawRect(0, 0, width, height);
-		hitScreen.graphics.endFill();
-		hitScreen.visible = false;
-		addChild(hitScreen);
 		
 		startTime = Lib.getTimer ();
 	}
 	
-	private function onEnterFrame(e: Event) : Void 
+	public static function setCombo(combo: Int): Int
 	{
-		var remainingTime = 90 - Math.round((Lib.getTimer() - startTime) / 1000);
-		if (Lib.getTimer() - lastTarget > 2000)  {
-			var index = 0;
-			do{
-				index = Math.floor(Math.random() * 4);
-			}while (!targets[index].pop());
-				lastTarget = Lib.getTimer();
-		}
-		for(target in targets){
-			if (target.popped && Lib.getTimer() - target.aliveTime > 5000){
-				target.push();
-			}
-		}
+		ShootRoom.combo = combo;
+		if (combo == 5)
+			Assets.getSound("sfx/megakill.mp3").play();
+		else if (combo == 10)
+			Assets.getSound("sfx/monsterkill.mp3").play();
+		else if (combo == 20)
+			Assets.getSound("sfx/wickedsick.mp3").play();
+			
+		return combo;
 	}
 	
-	private function hit(e: HitEvent) : Void 
+	private function onEnterFrame(e: Event) : Void 
 	{
-		//Actuate.tween(hitScreen, 0.1, { alpha: 0.5 } ).repeat(1).reflect();
+		var remainingTime = 30 - Math.round((Lib.getTimer() - startTime) / 1000);
+		if(remainingTime > 0){
+			if (Lib.getTimer() - lastTarget > 2000*accelerator)  {
+				var index = 0;
+				do{
+					index = Math.floor(Math.random() * 4);
+				}while (!targets[index].available);
+				targets[index].pop();
+				lastTarget = Lib.getTimer();
+			}
+			for(target in targets){
+				if (target.popped && ((Lib.getTimer() - target.aliveTime) > 5000*accelerator)){
+					target.push();
+					combo = 1;
+				}
+			}
+			timerField.text = remainingTime + "s";
+			scoreField.text = score + "pts";
+			comboField.text = "x" + ShootRoom.combo;
+			if(accelerator > 0.2)
+				accelerator -= 0.0009;
+		}
+		else {
+			cursor.stopDrag();
+			Mouse.show();
+			if(cursor.parent != null)
+				cursor.parent.removeChild(cursor);
+			removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			removeEventListener(MouseEvent.CLICK, onShoot);
+			addChild(EndScreen.instance);
+		}
 	}
 }
 
@@ -150,11 +197,3 @@ typedef Position = {
 	var x: Float;
 	var y: Float;
 }
-
-/**
-.onComplete(function()
-		{
-			hitScreen.visible = false;
-			//Actuate.tween(hitScreen, 0.2, { alpha: 0 } );
-		});
-		*/

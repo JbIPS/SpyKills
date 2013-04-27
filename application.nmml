@@ -20,6 +20,7 @@
 	<!-- assets -->
 	<assets path="assets/img" rename="img"/>
 	<assets path="assets/sfx" rename="sfx"/>
+	<assets path="assets/font" rename="font"/>
 	
 	<!-- DLLs -->
 	<ndll name="std" />

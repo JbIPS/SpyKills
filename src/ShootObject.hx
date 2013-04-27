@@ -14,12 +14,15 @@ import nme.geom.Point;
 class ShootObject extends Sprite
 {
 	private var bulletScale: Float;
+	private var bitmapData: BitmapData;
 
 	public function new(bitmapData: BitmapData, scale: Float = 1) 
 	{
 		super();
 		bulletScale = scale;
-		addChild(new Bitmap(bitmapData));
+		this.bitmapData = bitmapData;
+		var bitmap = new Bitmap(bitmapData);
+		addChild(bitmap);
 		addEventListener(MouseEvent.CLICK, onHit);
 	}
 	
@@ -36,6 +39,8 @@ class ShootObject extends Sprite
 		hit.x = e.localX - 5;
 		hit.y = e.localY - 5;
 		addChild(hit);
+		if(!Std.is(this, Target))
+			ShootRoom.combo = 1;
 	}
 	
 }

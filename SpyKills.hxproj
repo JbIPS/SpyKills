@@ -16,7 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="D:\Programs\NME\Motion-Twin\haxe\lib\nme/3,5,4/" />
+    <class path="D:\Programs\NME\Motion-Twin\haxe\lib\nme/3,5,5/" />
     <class path="bin/flash/haxe" />
   </classpaths>
   <!-- Build options -->
