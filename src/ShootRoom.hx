@@ -26,6 +26,7 @@ class ShootRoom extends Sprite
 	public static var combo (default, setCombo): Int = 1;
 	public static var accelerator: Float=1;
 	public static var startTime: Int;
+	private static var hud: Sprite = new Sprite();
 	
 	private var targets: Array<Target>;
 	private var lastTarget: Int;
@@ -76,24 +77,32 @@ class ShootRoom extends Sprite
 		var background = new ShootObject(Assets.getBitmapData("img/background.png"), 0.5);
 		addChild(background);
 		
-		var scoreFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 20, 0xFF0000, false);
+		hud.x = 50;
+		hud.y = 25;
+		hud.graphics.beginFill(0xFF0000, 0.4);
+		hud.graphics.drawRoundRect(0, 0, 100, 80, 10, 10);
+		hud.graphics.endFill();
+		
+		var scoreFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 20, 0x0062FF, false);
 		scoreField.selectable = scoreField.mouseEnabled = false;
 		scoreField.defaultTextFormat = scoreFormat;
-		scoreField.x = 60;
-		scoreField.y = 35;
-		addChild(scoreField);
+		scoreField.x = 10;
+		scoreField.y = 10;
+		hud.addChild(scoreField);
 		
 		comboField.selectable = scoreField.mouseEnabled = false;
 		comboField.defaultTextFormat = scoreFormat;
-		comboField.x = 60;
-		comboField.y = scoreField.x+20;
-		addChild(comboField);
+		comboField.x = scoreField.x;
+		comboField.y = scoreField.y+40;
+		hud.addChild(comboField);
 		
 		timerField.defaultTextFormat = scoreFormat;
 		timerField.selectable = timerField.mouseEnabled = false;
 		timerField.y = scoreField.y + 20;
 		timerField.x = scoreField.x;
-		addChild(timerField);
+		hud.addChild(timerField);
+		
+		addChild(hud);
 		
 		var target = new Target("metal");
 		targets.push(target);
@@ -153,7 +162,15 @@ class ShootRoom extends Sprite
 			Assets.getSound("sfx/monsterkill.mp3").play();
 		else if (combo == 20)
 			Assets.getSound("sfx/wickedsick.mp3").play();
-			
+		
+		hud.graphics.clear();
+		var red: Int = Math.round(Math.max(255 - (12.75 * combo), 0));
+		var green: Int = Math.round(Math.min(12.75 * combo, 255));
+		var color = (red & 0xFF) << 16 | (green & 0xFF) << 8 | (00 & 0xFF);
+		hud.graphics.beginFill(color,0.4);
+		hud.graphics.drawRoundRect(0, 0, 100, 80, 10, 10);
+		hud.graphics.endFill();
+		
 		return combo;
 	}
 	

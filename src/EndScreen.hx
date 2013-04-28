@@ -140,7 +140,7 @@ class EndScreen extends Sprite
 	
 	public function onSubmit(e: MouseEvent): Void
 	{
-		var request:URLRequest = new URLRequest("jbdb.php");
+		var request:URLRequest = new URLRequest("jbdb2.php");
 		request.method = URLRequestMethod.POST;
 		var variables = new URLVariables();
 		variables.name = nameField.text;

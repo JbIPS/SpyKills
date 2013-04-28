@@ -88,13 +88,13 @@ class Target extends ShootObject
 				
 				var points = new TextField();
 				points.embedFonts = true;
-				var textFormat: TextFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 15, 0xFFFFFF);
+				var textFormat: TextFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 18, 0xFFF000);
 				points.defaultTextFormat = textFormat;
 				points.selectable = points.mouseEnabled = false;
 				points.text = "+1s";
-				points.x = 70;
-				points.y = 70;
-				Actuate.tween(points, 2*ShootRoom.accelerator, { x: x+10, alpha: 0 } ).ease(Cubic.easeOut);
+				points.x = 80;
+				points.y = 50;
+				Actuate.tween(points, 2 * ShootRoom.accelerator, { scaleX: scaleX*2, scaleY: scaleY*2 , alpha: 0 } ).ease(Cubic.easeOut);
 				parent.addChild(points);
 			}
 		}

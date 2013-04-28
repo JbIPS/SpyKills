@@ -7,6 +7,7 @@ import nme.display.Bitmap;
 import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.MouseEvent;
+import nme.external.ExternalInterface;
 import nme.Lib;
 import nme.text.TextField;
 import nme.text.TextFieldAutoSize;
@@ -28,6 +29,8 @@ class Main extends Sprite
 		var stage = Lib.current.stage;
 		stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
 		stage.align = nme.display.StageAlign.TOP_LEFT;
+		
+		//ExternalInterface.addCallback("quit", quit);
 		
 		var bg = new Bitmap(Assets.getBitmapData("img/bckgd_menu.png"));
 		Lib.current.addChild(bg);
@@ -72,9 +75,6 @@ class Main extends Sprite
 		button2.graphics.drawRect(-65, 0, button1.width + 30, button1.height);
 		button2.graphics.endFill();
         Lib.current.addChild(button2);
-		
-		
-		//Lib.current.addChild(new ShootRoom());
 	}
 	
 	public static function startMethod(e: MouseEvent) : Void 
@@ -88,12 +88,48 @@ class Main extends Sprite
 	public static function showInstr(e: MouseEvent) : Void 
 	{
 		if(!instr){
+			
+			var container = new Sprite();
+			container.x = 470;
+			container.y = 1000;
 			var poster = new Bitmap(Assets.getBitmapData("img/poster_menu.png"));
-			poster.x = 470;
-			poster.y = 1000;
-			Actuate.tween(poster, 1, { y: 100 } ).ease(Cubic.easeOut);
-			Lib.current.addChild(poster);		
+			container.addChild(poster);
+			var title = new TextField();
+			title.embedFonts = true;
+			title.defaultTextFormat = new TextFormat(Assets.getFont("font/bebas.ttf").fontName, 30, TextFormatAlign.CENTER);
+			title.text = "Instructions";
+			title.width = poster.width;
+			title.y = 55;
+			title.selectable = title.mouseEnabled = false;
+			container.addChild(title);
+			
+			var text = new TextField();
+			text.embedFonts = true;
+			text.defaultTextFormat = new TextFormat(Assets.getFont("font/blue_highway_cd.ttf").fontName, 17, TextFormatAlign.JUSTIFY);
+			text.text = "Vous voilà devant les cibles.";
+			text.text += "\nEn visant la tête, vous doublez les points et gagnez du temps.";
+			text.text += "\nEn en ratant, vous perdez votre bonus. \n\nN'en laissez partir aucune intacte...";
+			text.wordWrap = true;
+			text.autoSize = TextFieldAutoSize.CENTER;
+			text.selectable = text.mouseEnabled = false;
+			text.width = poster.width -100;
+			text.x = 50;
+			text.y = 150;
+			container.addChild(text);
+			
+			Actuate.tween(container, 1, { y: 100 } ).ease(Cubic.easeOut);
+			Lib.current.addChild(container);		
 		}
+	}
+	
+	public static function quit() {
+		while(Lib.current.numChildren > 0){
+			Lib.current.removeChildAt(Lib.current.numChildren - 1);
+		}
+		ShootRoom.score = 0;
+		ShootRoom.combo = 1;
+		ShootRoom.accelerator = 1;
+		new Main();
 	}
 	
 }
