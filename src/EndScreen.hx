@@ -158,10 +158,11 @@ class EndScreen extends Sprite
 	
 	private function onRestart(e: MouseEvent) : Void 
 	{
+		while (Lib.current.numChildren > 0)
+			Lib.current.removeChildAt(Lib.current.numChildren-1);
 		ShootRoom.score = 0;
 		ShootRoom.combo = 1;
 		ShootRoom.accelerator = 1;
-		Lib.current.removeChildAt(0);
 		Lib.current.addChild(new ShootRoom());
 	}
 

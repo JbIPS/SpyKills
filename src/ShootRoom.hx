@@ -48,6 +48,7 @@ class ShootRoom extends Sprite
 		targets = new Array<Target>();
 		addEventListener(MouseEvent.CLICK, onShoot);
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 		
 		scoreField = new TextField();
 		scoreField.embedFonts = true;
@@ -55,6 +56,16 @@ class ShootRoom extends Sprite
 		timerField.embedFonts = true;
 		comboField = new TextField();
 		comboField.embedFonts = true;
+	}
+	
+	private function onRemove(e: Event) : Void 
+	{
+		removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		ShootRoom.score = 0;
+		ShootRoom.combo = 1;
+		ShootRoom.accelerator = 1;
+		while (hud.numChildren > 0)
+			hud.removeChildAt(hud.numChildren - 1);
 	}
 	
 	private function onShoot(e:MouseEvent):Void 
@@ -83,7 +94,7 @@ class ShootRoom extends Sprite
 		hud.graphics.drawRoundRect(0, 0, 100, 80, 10, 10);
 		hud.graphics.endFill();
 		
-		var scoreFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 20, 0x0062FF, false);
+		var scoreFormat = new TextFormat(Assets.getFont("font/blue_highway.ttf").fontName, 20, 0xFFFFFF, false);
 		scoreField.selectable = scoreField.mouseEnabled = false;
 		scoreField.defaultTextFormat = scoreFormat;
 		scoreField.x = 10;

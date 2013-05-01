@@ -30,7 +30,7 @@ class Main extends Sprite
 		stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
 		stage.align = nme.display.StageAlign.TOP_LEFT;
 		
-		//ExternalInterface.addCallback("quit", quit);
+		ExternalInterface.addCallback("quit", quit);
 		
 		var bg = new Bitmap(Assets.getBitmapData("img/bckgd_menu.png"));
 		Lib.current.addChild(bg);
@@ -126,9 +126,6 @@ class Main extends Sprite
 		while(Lib.current.numChildren > 0){
 			Lib.current.removeChildAt(Lib.current.numChildren - 1);
 		}
-		ShootRoom.score = 0;
-		ShootRoom.combo = 1;
-		ShootRoom.accelerator = 1;
 		new Main();
 	}
 	
